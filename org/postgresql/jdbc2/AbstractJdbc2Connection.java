@@ -694,16 +694,13 @@ public abstract class AbstractJdbc2Connection implements BaseConnection
      *
      * @exception SQLException if a database access error occurs,
      *                         this method  is called on a closed connection or
-     *                         this Connection object is in auto-commit mode
-     * @see setAutoCommit
      */
     public void commit() throws SQLException
     {
         checkClosed();
 
         if (autoCommit)
-            throw new PSQLException(GT.tr("Cannot commit when autoCommit is enabled."),
-                                    PSQLState.NO_ACTIVE_SQL_TRANSACTION);
+            return ;
 
         if (protoConnection.getTransactionState() != ProtocolConnection.TRANSACTION_IDLE)
             executeTransactionCommand(commitQuery);
@@ -723,7 +720,6 @@ public abstract class AbstractJdbc2Connection implements BaseConnection
      *
      * @exception SQLException if a database access error occurs,
      *                         this method  is called on a closed connection or
-     *                         this Connection object is in auto-commit mode
      * @see commit
      */
     public void rollback() throws SQLException
@@ -731,8 +727,7 @@ public abstract class AbstractJdbc2Connection implements BaseConnection
         checkClosed();
 
         if (autoCommit)
-            throw new PSQLException(GT.tr("Cannot rollback when autoCommit is enabled."),
-                                    PSQLState.NO_ACTIVE_SQL_TRANSACTION);
+            return ;
 
         if (protoConnection.getTransactionState() != ProtocolConnection.TRANSACTION_IDLE)
             executeTransactionCommand(rollbackQuery);
